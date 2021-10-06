@@ -1,0 +1,14 @@
+[package]
+name = "brace-expand"
+version = "0.1.0" # remember to update html_root_url
+authors = ["Christian Tamblyn <ctamblyn76@gmail.com>"]
+edition = "2018"
+description = "Rust crate which performs brace expansion of strings, as in shells like Bash etc."
+license = "MIT"
+documentation = "https://docs.rs/brace-expand"
+repository = "https://github.com/ctamblyn/brace-expand"
+keywords = ["shell", "brace", "expansion"]
+categories = ["algorithms"]
+
+[dependencies]
+
