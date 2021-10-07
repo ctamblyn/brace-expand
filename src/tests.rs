@@ -41,3 +41,17 @@ fn escaping_backslashes_works() {
 
     assert_eq!(output, vec!["\\ad", "\\b\\d", "cd"]);
 }
+
+#[test]
+fn trival_expansion_works() {
+    let output = brace_expand("a");
+
+    assert_eq!(output, vec!["a"]);
+}
+
+#[test]
+fn trival_expansion_with_escaped_backslash_works() {
+    let output = brace_expand("a\\\\");
+
+    assert_eq!(output, vec!["a\\"]);
+}
