@@ -11,5 +11,11 @@ keywords = ["shell", "brace", "expansion"]
 categories = ["algorithms"]
 rust-version = "1.31.1"
 
-[dependencies]
+[dev-dependencies]
+criterion = { version = "0.3", features = ["html_reports"] }
 
+[[bench]]
+name = "benchmarks"
+harness = false
+
+[dependencies]
