@@ -79,7 +79,7 @@ which produces the following output:
 this is a backslash: \
 ```
 
-# Example
+## Example
 
 The following code snippet illustrates how inputs can contain multiple lists,
 and even be nested:
