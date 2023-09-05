@@ -9,6 +9,7 @@ documentation = "https://docs.rs/brace-expand"
 repository = "https://github.com/ctamblyn/brace-expand"
 keywords = ["shell", "brace", "expansion"]
 categories = ["algorithms"]
+rust-version = "1.31.1"
 
 [dependencies]
 

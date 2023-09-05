@@ -1,18 +1,75 @@
-name: Rust
-
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+      - staging
+      - trying
   pull_request:
-    branches: [ main ]
+
+name: Tests
 
 jobs:
-  build:
-
+  check:
+    name: Check
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        rust:
+          - stable
+          - 1.31.1
     steps:
-    - uses: actions/checkout@v2
-    - name: Run tests
-      run: cargo test --release --verbose
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ matrix.rust }}
+      - run: cargo check
 
+  test:
+    name: Test Suite
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        rust:
+          - stable
+          - 1.31.1
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ matrix.rust }}
+      - run: cargo test
+
+  fmt:
+    name: Rustfmt
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          components: rustfmt
+          toolchain: stable
+      - run: cargo fmt --all -- --check
+
+  clippy:
+    name: Clippy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          components: clippy
+          toolchain: stable
+      - run: cargo clippy -- -D warnings
+
+  ci-success:
+    name: ci
+    if: ${{ success() }}
+    needs:
+      - check
+      - test
+      - fmt
+      - clippy
+    runs-on: ubuntu-20.04
+    steps:
+      - name: CI succeeded
+        run: exit 0

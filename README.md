@@ -100,4 +100,12 @@ assert_eq!(
 );
 ```
 
+## Minimum supported Rust version (MSRV) policy
 
+`brace-expand`'s current minimum supported Rust version (MSRV) is **1.31.1**.
+
+`brace-expand` is guaranteed to compile with that version.  It might also
+compile with older versions, but that could change in a future patch release.
+
+If the MSRV of `brace-expand` changes, that will be done in a _minor_ version
+release (e.g. 1.0.x -> 1.1.0).
