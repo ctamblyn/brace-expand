@@ -1,81 +1,6 @@
 //! This library performs brace expansion of strings, as in shells like Bash etc.
 //!
-//! Given the input:
-//!
-//! ```text
-//! {hello,goodbye,wonderful} world
-//! ```
-//!
-//! this algorithm produces the following collection of strings:
-//!
-//! ```text
-//! hello world
-//! goodbye world
-//! wonderful world
-//! ```
-//!
-//! Note that unlike shell brace expansion, the result is a collection of separate
-//! strings rather than a single string.  Also, whitespace characters are not
-//! treated specially by the algorithm; they are on the same footing as printing
-//! characers.
-//!
-//! Curly braces `{` and `}` are used to mark the start and end of an expansion
-//! list, and commas separate the items in each list.  Literal curly braces and
-//! commas must be escaped with single backslashes:
-//!
-//! ```text
-//! this is {\{braced\},[bracketed\, nicely]}
-//! ```
-//!
-//! produces:
-//!
-//! ```text
-//! this is {braced}
-//! this is [bracketed, nicely]
-//! ```
-//!
-//! If you want a literal backslash, that too must be escaped:
-//!
-//! ```text
-//! this is a backslash: \\
-//! ```
-//!
-//! produces:
-//!
-//! ```text
-//! this is a backslash: \
-//! ```
-//!
-//! Note that the escaping backslashes are removed from the output.
-//!
-//! Inputs can contain multiple expansion lists, and these can be nested.  For
-//! example:
-//!
-//! ```text
-//! {hello,goodbye} {world,my {friends,colleagues}}
-//! ```
-//!
-//! produces:
-//!
-//! ```text
-//! hello world
-//! goodbye world
-//! hello my friends
-//! hello my colleagues
-//! goodbye my friends
-//! goodbye my colleagues
-//! ```
-//!
-//! # Example
-//!
-//! ```rust
-//! # fn main() {
-//! # use brace_expand::brace_expand;
-//! let output = brace_expand("this {is,is not} a pipe");
-//!
-//! assert_eq!(output, vec!["this is a pipe", "this is not a pipe"]);
-//! # }
-//! ```
+//! See the [brace_expand] function documentation for details.
 
 #![doc(html_root_url = "https://docs.rs/brace-expand/0.1.0")]
 
@@ -195,12 +120,89 @@ fn expand_one_level(to_expand: Vec<Token>) -> Expansion {
 
 //------------------------------------------------------------------------------
 
-/// Expand braces and return the set of results.
+/// Expand braces and return the collection of results.
+///
+/// For example, given the input:
+///
+/// ```text
+/// {hello,goodbye,wonderful} world
+/// ```
+///
+/// this algorithm produces the following collection of strings:
+///
+/// ```text
+/// hello world
+/// goodbye world
+/// wonderful world
+/// ```
+///
+/// Note that unlike shell brace expansion, the result is a collection of separate strings rather
+/// than a single string.  Also, whitespace characters are not treated specially by the algorithm;
+/// they are on the same footing as printing characters.
+///
+/// Curly braces `{` and `}` are used to mark the start and end of an expansion list, and commas
+/// separate the items in each list.  Literal curly braces and commas must be escaped with single
+/// backslashes:
+///
+/// ```text
+/// this is {\{braced\},[bracketed\, nicely]}
+/// ```
+///
+/// produces:
+///
+/// ```text
+/// this is {braced}
+/// this is [bracketed, nicely]
+/// ```
+///
+/// Note that in Rust source we must escape the backslashes within ordinary string literals an
+/// additional time, giving the following:
+///
+/// ```rust
+/// # use brace_expand::brace_expand;
+/// let output = brace_expand("this is {\\{braced\\},[bracketed\\, nicely]}");
+///
+/// assert_eq!(
+///     output,
+///     vec![
+///         "this is {braced}",
+///         "this is [bracketed, nicely]"
+///     ]
+/// );
+/// ```
+///
+/// If you want a literal backslash, that must be escaped by writing it as a double backslash:
+///
+/// ```text
+/// this is a backslash: \\
+/// ```
+///
+/// produces:
+///
+/// ```text
+/// this is a backslash: \
+/// ```
+///
+/// In Rust source, this would look as follows:
+///
+/// ```rust
+/// # use brace_expand::brace_expand;
+/// let output = brace_expand("this is a backslash: \\\\");
+///
+/// assert_eq!(
+///     output,
+///     vec![
+///         "this is a backslash: \\"
+///     ]
+/// );
+/// ```
 ///
 /// # Example
 ///
+/// The following code snippet illustrates how inputs can contain multiple lists, and even be
+/// nested:
+///
 /// ```rust
-/// # fn main() {
 /// # use brace_expand::brace_expand;
 /// let output = brace_expand("{hello,goodbye} {world,my {friends,colleagues}}");
 ///
@@ -215,7 +217,6 @@ fn expand_one_level(to_expand: Vec<Token>) -> Expansion {
 ///         "goodbye my colleagues",
 ///     ]
 /// );
-/// # }
 /// ```
 pub fn brace_expand(input: &str) -> Vec<String> {
     let mut work_queue: Vec<Vec<_>> = vec![TokenIter::new(input).collect()];

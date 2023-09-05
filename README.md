@@ -26,7 +26,7 @@ wonderful world
 Note that unlike shell brace expansion, the result is a collection of separate
 strings rather than a single string.  Also, whitespace characters are not
 treated specially by the algorithm; they are on the same footing as printing
-characers.
+characters.
 
 Curly braces `{` and `}` are used to mark the start and end of an expansion
 list, and commas separate the items in each list.  Literal curly braces and
@@ -43,7 +43,17 @@ this is {braced}
 this is [bracketed, nicely]
 ```
 
-If you want a literal backslash, that too must be escaped:
+Note that in Rust source we must escape the backslashes within ordinary string
+literals an additional time, giving the following:
+
+```rust
+let output = brace_expand("this is {\\{braced\\},[bracketed\\, nicely]}");
+
+assert_eq!(output, vec!["this is {braced}", "this is [bracketed, nicely]"]);
+```
+
+If you want a literal backslash, that must be escaped by writing it as a double
+backslash:
 
 ```text
 this is a backslash: \\
@@ -55,34 +65,39 @@ produces:
 this is a backslash: \
 ```
 
-Note that the escaping backslashes are removed from the output.
-
-Inputs can contain multiple expansion lists, and these can be nested.  For
-example:
-
-```text
-{hello,goodbye} {world,my {friends,colleagues}}
-```
-
-produces:
-
-```text
-hello world
-goodbye world
-hello my friends
-hello my colleagues
-goodbye my friends
-goodbye my colleagues
-```
-
-## Example
+In Rust source, this would look as follows:
 
 ```rust
-use brace_expand::brace_expand;
+let output = brace_expand("this is a backslash: \\\\");
 
-fn main() {
-    let output = brace_expand("this {is,is not} a pipe"); 
-
-    assert_eq!(output, vec!["this is a pipe", "this is not a pipe"]);
-}
+println!("{}", output[0]);
 ```
+
+which produces the following output:
+
+```text
+this is a backslash: \
+```
+
+# Example
+
+The following code snippet illustrates how inputs can contain multiple lists,
+and even be nested:
+
+```rust
+let output = brace_expand("{hello,goodbye} {world,my {friends,colleagues}}");
+
+assert_eq!(
+    output,
+    vec![
+        "hello world",
+        "hello my friends",
+        "hello my colleagues",
+        "goodbye world",
+        "goodbye my friends",
+        "goodbye my colleagues",
+    ]
+);
+```
+
+
