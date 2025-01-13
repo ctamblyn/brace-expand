@@ -33,7 +33,7 @@ impl<'a> TokenIter<'a> {
     }
 }
 
-impl<'a> Iterator for TokenIter<'a> {
+impl Iterator for TokenIter<'_> {
     type Item = Token;
 
     fn next(&mut self) -> Option<Self::Item> {
